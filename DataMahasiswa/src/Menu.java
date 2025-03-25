@@ -198,7 +198,7 @@ public class Menu extends JFrame{
     }
 
     public void updateData() {
-        // ambil data dari form
+        // Ambil data dari form
         String nim = nimField.getText();
         String nama = namaField.getText();
         String jenisKelamin = jenisKelaminComboBox.getSelectedItem().toString();
@@ -235,14 +235,14 @@ public class Menu extends JFrame{
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     public void deleteData() {
         String current = nimField.getText();
+        String currentNama = namaField.getText();
 
         // Konfirmasi delete data dari list
-        int res = JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus NIM " + current + "?", "Konfirmasi", JOptionPane.YES_NO_CANCEL_OPTION);
+        int res = JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus NIM " + current + " " + currentNama + "?", "Konfirmasi", JOptionPane.YES_NO_CANCEL_OPTION);
         if (res == JOptionPane.YES_OPTION){
             // Hapus data dari list
             String sql = "DELETE FROM mahasiswa WHERE nim = '" + current + "';";
