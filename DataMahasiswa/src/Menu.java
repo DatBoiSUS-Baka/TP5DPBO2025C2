@@ -239,11 +239,16 @@ public class Menu extends JFrame{
     }
 
     public void deleteData() {
+        String current = nimField.getText();
+
         // Konfirmasi delete data dari list
-        int res = JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus?", "Konfirmasi", JOptionPane.YES_NO_CANCEL_OPTION);
+        int res = JOptionPane.showConfirmDialog(null, "Yakin ingin menghapus NIM " + current + "?", "Konfirmasi", JOptionPane.YES_NO_CANCEL_OPTION);
         if (res == JOptionPane.YES_OPTION){
             // Hapus data dari list
-            listMahasiswa.remove(selectedIndex);
+            String sql = "DELETE FROM mahasiswa WHERE nim = '" + current + "';";
+
+            // Jalankan Query
+            database.insertUpdateDeleteQuery(sql);
 
             // Update tabel
             mahasiswaTable.setModel(setTable());
