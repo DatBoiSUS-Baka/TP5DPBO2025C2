@@ -1,3 +1,5 @@
+import com.mysql.cj.protocol.Resultset;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.transform.Result;
@@ -163,20 +165,36 @@ public class Menu extends JFrame{
         String jenisKelamin = jenisKelaminComboBox.getSelectedItem().toString();
         String makananFavorit = makananField.getText();
 
-        // tambahkan data ke dalam database
-        String sql = "INSERT INTO mahasiswa VALUES (null, '" + nim + "', '" + nama + "', '" + jenisKelamin + "', '" + makananFavorit + "');";
-        listMahasiswa.add(new Mahasiswa(nim, nama, jenisKelamin, makananFavorit));
+        if(nim.isEmpty() || nama.isEmpty() || jenisKelamin.isEmpty() || makananFavorit.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Sepertinya masih ada yang kosong, semua field perlu diisi!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // update tabel
-        mahasiswaTable.setModel(setTable());
+        try{
+            String cekNim = "SELECT * FROM mahasiswa WHERE nim = '" + nim + "';";
+            ResultSet result = database.selectQuery(cekNim);
 
-        // bersihkan form
-        clearForm();
+            if(result.next()){
+                JOptionPane.showMessageDialog(null, "Sepertinya NIM ini sudah ada.", "Warning", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            // tambahkan data ke dalam database
+            String sql = "INSERT INTO mahasiswa VALUES (null, '" + nim + "', '" + nama + "', '" + jenisKelamin + "', '" + makananFavorit + "');";
+            database.insertUpdateDeleteQuery(sql);
 
-        // feedback
-        System.out.println("Insert berhasil!");
-        JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan");
+            // update tabel
+            mahasiswaTable.setModel(setTable());
 
+            // bersihkan form
+            clearForm();
+
+            // feedback
+            System.out.println("Insert berhasil!");
+            JOptionPane.showMessageDialog(null, "Data berhasil ditambahkan");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void updateData() {
