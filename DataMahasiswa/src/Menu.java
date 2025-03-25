@@ -134,10 +134,10 @@ public class Menu extends JFrame{
         // buat objek tabel dengan kolom yang sudah dibuat
         DefaultTableModel temp = new DefaultTableModel(null, column);
 
+        // isi tabel dengan listMahasiswa
         try {
             ResultSet resultSet = database.selectQuery("Select * FROM mahasiswa");
 
-        // isi tabel dengan listMahasiswa
             int i = 0;
             while(resultSet.next()){
                 Object[] row = new Object[5];
@@ -145,7 +145,7 @@ public class Menu extends JFrame{
                 row[0] = i + 1;
                 row[1] = resultSet.getString("nim");
                 row[2] = resultSet.getString("nama");
-                row[3] = resultSet.getString("jenis_kelamin ");
+                row[3] = resultSet.getString("jenis_kelamin");
                 row[4] = resultSet.getString("makanan_favorit");
 
                 temp.addRow(row);
@@ -163,7 +163,8 @@ public class Menu extends JFrame{
         String jenisKelamin = jenisKelaminComboBox.getSelectedItem().toString();
         String makananFavorit = makananField.getText();
 
-        // tambahkan data ke dalam list
+        // tambahkan data ke dalam database
+        String sql = "INSERT INTO mahasiswa VALUES (null, '" + nim + "', '" + nama + "', '" + jenisKelamin + "', '" + makananFavorit + "');";
         listMahasiswa.add(new Mahasiswa(nim, nama, jenisKelamin, makananFavorit));
 
         // update tabel
