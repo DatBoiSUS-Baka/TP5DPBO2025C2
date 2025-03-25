@@ -1,10 +1,13 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.transform.Result;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Menu extends JFrame{
@@ -30,6 +33,7 @@ public class Menu extends JFrame{
     private int selectedIndex = -1;
     // list untuk menampung semua mahasiswa
     private ArrayList<Mahasiswa> listMahasiswa;
+    private Database database;
 
     private JPanel mainPanel;
     private JTextField nimField;
@@ -50,6 +54,9 @@ public class Menu extends JFrame{
     public Menu() {
         // inisialisasi listMahasiswa
         listMahasiswa = new ArrayList<>();
+
+        // Buat objek database
+        database = new Database();
 
         // isi listMahasiswa
         populateList();
@@ -127,18 +134,26 @@ public class Menu extends JFrame{
         // buat objek tabel dengan kolom yang sudah dibuat
         DefaultTableModel temp = new DefaultTableModel(null, column);
 
-        // isi tabel dengan listMahasiswa
-        for (int i = 0; i < listMahasiswa.size(); i++){
-            Object[] row = new Object[5];
-            row[0] = i + 1;
-            row[1] = listMahasiswa.get(i).getNim();
-            row[2] = listMahasiswa.get(i).getNama();
-            row[3] = listMahasiswa.get(i).getJenisKelamin();
-            row[4] = listMahasiswa.get(i).getMakananFavorit();
+        try {
+            ResultSet resultSet = database.selectQuery("Select * FROM mahasiswa");
 
-            temp.addRow(row);
-        }
-        return temp; // return juga harus diganti
+        // isi tabel dengan listMahasiswa
+            int i = 0;
+            while(resultSet.next()){
+                Object[] row = new Object[5];
+
+                row[0] = i + 1;
+                row[1] = resultSet.getString("nim");
+                row[2] = resultSet.getString("nama");
+                row[3] = resultSet.getString("jenis_kelamin ");
+                row[4] = resultSet.getString("makanan_favorit");
+
+                temp.addRow(row);
+                i++;
+            }
+        } catch (SQLException e){ throw new RuntimeException(e); }
+
+        return temp;
     }
 
     public void insertData() {
