@@ -204,21 +204,37 @@ public class Menu extends JFrame{
         String jenisKelamin = jenisKelaminComboBox.getSelectedItem().toString();
         String makanan = makananField.getText();
 
-        // ubah data mahasiswa di list
-        listMahasiswa.get(selectedIndex).setNim(nim);
-        listMahasiswa.get(selectedIndex).setNama(nama);
-        listMahasiswa.get(selectedIndex).setJenisKelamin(jenisKelamin);
-        listMahasiswa.get(selectedIndex).setMakananFavorit(makanan);
+        if (nim.isEmpty() || nama.isEmpty() || jenisKelamin.isEmpty() || makanan.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Sepertinya masih ada yang kosong, semua field harus diisi!", "Warning", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        // update tabel
-        mahasiswaTable.setModel(setTable());
+        try {
+            String cekNim = "SELECT * FROM mahasiswa WHERE nim = '" + nim + "';";
+            ResultSet result = database.selectQuery(cekNim);
+            if (!result.next()){
+                JOptionPane.showMessageDialog(null, "Sepertinya NIM ini sudah ada.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        // bersihkan form
-        clearForm();
+            // ubah data mahasiswa di list
+            String sql = "UPDATE mahasiswa SET nama = '" + nama + "', jenis_kelamin = '" + jenisKelamin + "', makanan_favorit = '" + makanan + "' WHERE nim = '" + nim + "';";
+            database.insertUpdateDeleteQuery(sql);
 
-        // feedback
-        System.out.println("Update Berahasil!");
-        JOptionPane.showMessageDialog(null, "Data berhasil diubah!");
+            // update tabel
+            mahasiswaTable.setModel(setTable());
+
+            // bersihkan form
+            clearForm();
+
+            // feedback
+            System.out.println("Update Berahasil!");
+            JOptionPane.showMessageDialog(null, "Data berhasil diubah!");
+
+        } catch (Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 

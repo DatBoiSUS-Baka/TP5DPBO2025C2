@@ -39,4 +39,8 @@ public class Database {
     public Statement getStatement(){
         return statement;
     }
+
+    public Connection getConnection(){
+        return connection;
+    }
 }
